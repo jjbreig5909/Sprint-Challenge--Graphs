@@ -58,11 +58,15 @@ def escape_route(direction):
 paths = Stack()
 visited = set()
 room_map = {}
+last_room = []
+use_temp_path = False #I need this to know if I should be randomly picking a direction or not. Default is not!
 # While loop until all rooms are visited:
 while len(visited) < len(world.rooms):
     exits = player.current_room.get_exits() #Returning all potential exits from room
     
     path = []
+    temp_path = []
+
     for exit in exits:
         if player.current_room.name not in room_map: #Adding room to room map if it doesn't exist
             room_map[player.current_room.name] = {'n': '?', 's': '?', 'e': '?', 'w' : '?'}
@@ -70,17 +74,42 @@ while len(visited) < len(world.rooms):
                 if player.current_room.get_room_in_direction(direction) != None:
                     room_map[player.current_room.name][direction] = player.current_room.get_room_in_direction(direction).id #Adds neighboring room to room map. Still need to delete "None" at end...
 
-        if exit is not None and player.current_room.get_room_in_direction(exit) not in visited: 
-            print("Room in direction", player.current_room.get_room_in_direction(exit))
-            path.append(exit) #Adding all unexplored exits to path (up to 4: n,s,e,w)
+        if exit is not None:
+            potential_room = player.current_room.get_room_in_direction(exit)
+            if potential_room in visited:
+                if potential_room is not last_room:
+                    explored_room = potential_room
+                    for new_exit in explored_room.get_exits():
+                        if new_exit is not None and potential_room.get_room_in_direction(new_exit) not in visited:
+                            temp_path.append(exit)
+                            temp_path.append(new_exit)
+                            use_temp_path = True
+                            break
+                            
+            if potential_room not in visited: 
+                path.append(exit) #Adding all unexplored exits to path (up to 4: n,s,e,w)
+            
 
     visited.add(player.current_room)
 
-    if len(path) > 0:
+    if len(path) > 0 and use_temp_path == False:
         move = random.randint(0, len(path) - 1) #Picking random move index
         paths.add(path[move])
+        last_room = player.current_room
         player.travel(path[move])
         traversal_path.append(path[move])
+
+    elif use_temp_path == True:
+        print("Moves so far: ", traversal_path)
+        print("using temp path", temp_path)
+        for move in temp_path: 
+            paths.add(move)
+            last_room = player.current_room
+            player.travel(move)
+            traversal_path.append(move)
+        use_temp_path = False
+            
+
 
     else:
         end = paths.remove()
