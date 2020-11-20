@@ -28,6 +28,21 @@ player = Player(world.starting_room)
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
 traversal_path = []
+# My code: 
+# Creating stack class
+class Stack:
+    def __init__(self):
+        self.storage = []
+    def add(self, value):
+        self.storage.append(value)
+    def remove(self):
+        if len(self.storage) > 0:
+            return self.storage.pop()
+        else:
+            return None
+    def size(self):
+        return len(self.storage)
+
 room_list = {}
 room_list[world.starting_room.id] = player.current_room.get_exits()
 print("Room list", room_list)
@@ -54,12 +69,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
+# player.current_room.print_room_description(player)
+# while True:
+#     cmds = input("-> ").lower().split(" ")
+#     if cmds[0] in ["n", "s", "e", "w"]:
+#         player.travel(cmds[0], True)
+#     elif cmds[0] == "q":
+#         break
+#     else:
+#         print("I did not understand that command.")
