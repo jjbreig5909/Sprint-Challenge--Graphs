@@ -28,6 +28,9 @@ player = Player(world.starting_room)
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
 traversal_path = []
+room_list = {}
+room_list[world.starting_room.id] = player.current_room.get_exits()
+print("Room list", room_list)
 
 
 
