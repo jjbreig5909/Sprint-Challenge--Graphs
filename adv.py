@@ -13,8 +13,8 @@ world = World()
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
-map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+# map_file = "maps/test_loop_fork.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -80,11 +80,14 @@ while len(visited) < len(world.rooms):
                 if potential_room is not last_room:
                     explored_room = potential_room
                     for new_exit in explored_room.get_exits():
-                        if new_exit is not None and potential_room.get_room_in_direction(new_exit) not in visited:
-                            temp_path.append(exit)
+                        if new_exit is not None and potential_room.get_room_in_direction(new_exit) not in visited: #Basically, "if the already explored room has rooms that are unexplored":
+                            temp_path.append(exit) 
                             temp_path.append(new_exit)
                             use_temp_path = True
-                            break
+                            print("Current Room ", player.current_room.id)
+                            print("moves so far:", traversal_path)
+                            print("moves added: ", temp_path)
+                            break #I don't want to add more than one new path to travel down and I only want to surpass loop point
                             
             if potential_room not in visited: 
                 path.append(exit) #Adding all unexplored exits to path (up to 4: n,s,e,w)
@@ -100,12 +103,13 @@ while len(visited) < len(world.rooms):
         traversal_path.append(path[move])
 
     elif use_temp_path == True:
-        print("Moves so far: ", traversal_path)
-        print("using temp path", temp_path)
+        # print("Moves so far: ", traversal_path)
+        # print("using temp path", temp_path)
         for move in temp_path: 
             paths.add(move)
             last_room = player.current_room
             player.travel(move)
+            print("Moved: ", move)
             traversal_path.append(move)
         use_temp_path = False
             
@@ -116,8 +120,7 @@ while len(visited) < len(world.rooms):
         player.travel(escape_route(end))
         if len(visited) < len(world.rooms): #Putting this in an 'if' keeps from appending unnecessary move at end. 
             traversal_path.append(escape_route(end))
-
-print(room_map)
+            # print("Moves so far: ", traversal_path)
 
 
 # TRAVERSAL TEST - DO NOT MODIFY
