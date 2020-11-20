@@ -121,3 +121,37 @@ else:
 #         break
 #     else:
 #         print("I did not understand that command.")
+
+
+
+######## IF SOMETHING GOES HORRIBLY WRONG REPLACE EVERYTHING WITH THIS: #########
+# while len(visited) < len(world.rooms):
+#     exits = player.current_room.get_exits() #Returning all potential exits from room
+    
+#     path = []
+#     for exit in exits:
+#         if player.current_room.name not in room_map: #Adding room to room map if it doesn't exist
+#             room_map[player.current_room.name] = {'n': '?', 's': '?', 'e': '?', 'w' : '?'}
+#             for direction in room_map[player.current_room.name]:
+#                 if player.current_room.get_room_in_direction(direction) != None:
+#                     room_map[player.current_room.name][direction] = player.current_room.get_room_in_direction(direction).id #Adds neighboring room to room map. Still need to delete "None" at end...
+
+#         if exit is not None and player.current_room.get_room_in_direction(exit) not in visited: 
+#             print("Room in direction", player.current_room.get_room_in_direction(exit))
+#             path.append(exit) #Adding all unexplored exits to path (up to 4: n,s,e,w)
+
+#     visited.add(player.current_room)
+
+#     if len(path) > 0:
+#         move = random.randint(0, len(path) - 1) #Picking random move index
+#         paths.add(path[move])
+#         player.travel(path[move])
+#         traversal_path.append(path[move])
+
+#     else:
+#         end = paths.remove()
+#         player.travel(escape_route(end))
+#         if len(visited) < len(world.rooms): #Putting this in an 'if' keeps from appending unnecessary move at end. 
+#             traversal_path.append(escape_route(end))
+
+# print(room_map)
