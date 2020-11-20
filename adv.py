@@ -13,8 +13,8 @@ world = World()
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
-# map_file = "maps/test_loop_fork.txt"
-map_file = "maps/main_maze.txt"
+map_file = "maps/test_loop_fork.txt"
+# map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -43,9 +43,43 @@ class Stack:
     def size(self):
         return len(self.storage)
 
-room_list = {}
-room_list[world.starting_room.id] = player.current_room.get_exits()
-print("Room list", room_list)
+# Starting traversal:
+def escape_route(direction):
+    # save our route back to unvisited exits
+    if direction == 'n':
+        return 's'
+    elif direction == 's':
+        return 'n'
+    elif direction == 'e':
+        return 'w'
+    elif direction == 'w':
+        return 'e'
+
+paths = Stack()
+visited = set()
+
+# While loop until all rooms are visited:
+while len(visited) < len(world.rooms):
+    exits = player.current_room.get_exits() #Returning all potential exits from room
+    path = []
+    for exit in exits:
+        if exit is not None and player.current_room.get_room_in_direction(exit) not in visited: 
+            print("Room in direction", player.current_room.get_room_in_direction(exit))
+            path.append(exit) #Adding all unexplored exits to path (up to 4: n,s,e,w)
+
+    visited.add(player.current_room)
+
+    if len(path) > 0:
+        move = random.randint(0, len(path) - 1) #Picking random move index
+        paths.add(path[move])
+        player.travel(path[move])
+        traversal_path.append(path[move])
+
+    else:
+        end = paths.remove()
+        player.travel(escape_route(end))
+        if len(visited) < len(world.rooms): #Putting this in an if keeps from appending unnecessary move at end. 
+            traversal_path.append(escape_route(end))
 
 
 
@@ -60,6 +94,7 @@ for move in traversal_path:
 
 if len(visited_rooms) == len(room_graph):
     print(f"TESTS PASSED: {len(traversal_path)} moves, {len(visited_rooms)} rooms visited")
+    print(traversal_path)
 else:
     print("TESTS FAILED: INCOMPLETE TRAVERSAL")
     print(f"{len(room_graph) - len(visited_rooms)} unvisited rooms")
