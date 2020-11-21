@@ -8,5 +8,6 @@ class Player:
             if (show_rooms):
                 next_room.print_room_description(self)
         else:
-            return(False)
             print("You cannot move in that direction.")
+            return(False)
+            

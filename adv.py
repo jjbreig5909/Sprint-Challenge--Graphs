@@ -60,6 +60,7 @@ visited = set()
 room_map = {}
 last_room = []
 use_temp_path = False #I need this to know if I should be randomly picking a direction or not. Default is not!
+
 # While loop until all rooms are visited:
 while len(visited) < len(world.rooms):
     exits = player.current_room.get_exits() #Returning all potential exits from room
@@ -80,13 +81,13 @@ while len(visited) < len(world.rooms):
                 if potential_room is not last_room:
                     explored_room = potential_room
                     for new_exit in explored_room.get_exits():
-                        if new_exit is not None and potential_room.get_room_in_direction(new_exit) not in visited: #Basically, "if the already explored room has rooms that are unexplored":
+                        if new_exit is not None and explored_room.get_room_in_direction(new_exit) not in visited: #Basically, "if the already explored room has rooms that are unexplored":
                             temp_path.append(exit) 
                             temp_path.append(new_exit)
                             use_temp_path = True
-                            print("Current Room ", player.current_room.id)
-                            print("moves so far:", traversal_path)
-                            print("moves added: ", temp_path)
+                            # print("Current Room ", player.current_room.id)
+                            # print("moves so far:", traversal_path)
+                            # print("moves added: ", temp_path)
                             break #I don't want to add more than one new path to travel down and I only want to surpass loop point
                             
             if potential_room not in visited: 
@@ -106,17 +107,26 @@ while len(visited) < len(world.rooms):
         # print("Moves so far: ", traversal_path)
         # print("using temp path", temp_path)
         for move in temp_path: 
-            paths.add(move)
+           
             last_room = player.current_room
             player.travel(move)
             print("Moved: ", move)
+            print(len(visited))
             traversal_path.append(move)
         use_temp_path = False
-            
+        print(paths.storage)
+        paths.storage=[temp_path[1]]
+        print(paths.storage)
 
 
     else:
+        print("backtracking!")
+        print(paths.storage)
         end = paths.remove()
+        print("This is end: ", end)
+        if end is None:
+            print("Moves so far: ", traversal_path) 
+            break
         player.travel(escape_route(end))
         if len(visited) < len(world.rooms): #Putting this in an 'if' keeps from appending unnecessary move at end. 
             traversal_path.append(escape_route(end))
