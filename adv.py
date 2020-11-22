@@ -90,8 +90,6 @@ while len(visited) < len(world.rooms):
         if len(visited) < len(world.rooms): #Putting this in an 'if' keeps from appending unnecessary move at end. 
             traversal_path.append(escape_route(end))
 
-print(room_map)
-
 
 # TRAVERSAL TEST - DO NOT MODIFY
 visited_rooms = set()
@@ -123,8 +121,3 @@ else:
 #         break
 #     else:
 #         print("I did not understand that command.")
-
-
-
-######## IF SOMETHING GOES HORRIBLY WRONG REPLACE EVERYTHING WITH THIS: #########
-# 
