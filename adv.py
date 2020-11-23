@@ -55,40 +55,67 @@ def escape_route(direction):
     elif direction == 'w':
         return 'e'
 
-paths = Stack()
-visited = set()
+# paths = Stack()
+# visited = set()
 room_map = {}
 last_room = []
-use_temp_path = False #I need this to know if I should be randomly picking a direction or not. Default is not!
+
 
 # While loop until all rooms are visited:
-while len(visited) < len(world.rooms):
-    exits = player.current_room.get_exits() #Returning all potential exits from room
-    
-    path = []
-    for exit in exits:
-        if player.current_room.name not in room_map: #Adding room to room map if it doesn't exist
-            room_map[player.current_room.name] = {'n': '?', 's': '?', 'e': '?', 'w' : '?'}
-            for direction in room_map[player.current_room.name]:
-                if player.current_room.get_room_in_direction(direction) != None:
-                    room_map[player.current_room.name][direction] = player.current_room.get_room_in_direction(direction).id #Adds neighboring room to room map. Still need to delete "None" at end...
+def find_all_rooms(traversal_path, visited, paths):
+    while len(visited) < len(world.rooms):
 
-        if exit is not None and player.current_room.get_room_in_direction(exit) not in visited: 
-            path.append(exit) #Adding all unexplored exits to path (up to 4: n,s,e,w)
+        exits = player.current_room.get_exits() #Returning all potential exits from room
+        path = []
 
-    visited.add(player.current_room)
+        for exit in exits:
+            if player.current_room.name not in room_map: #Adding room to room map if it doesn't exist
+                room_map[player.current_room.name] = {'n': '?', 's': '?', 'e': '?', 'w' : '?'}
+                for direction in room_map[player.current_room.name]:
+                    if player.current_room.get_room_in_direction(direction) != None:
+                        room_map[player.current_room.name][direction] = player.current_room.get_room_in_direction(direction).id #Adds neighboring room to room map. Still need to delete "None" at end...
 
-    if len(path) > 0:
-        move = random.randint(0, len(path) - 1) #Picking random move index
-        paths.add(path[move])
-        player.travel(path[move])
-        traversal_path.append(path[move])
+            if exit is not None and player.current_room.get_room_in_direction(exit) not in visited: 
+                path.append(exit) #Adding all unexplored exits to path (up to 4: n,s,e,w)
 
-    else:
-        end = paths.remove()
-        player.travel(escape_route(end))
-        if len(visited) < len(world.rooms): #Putting this in an 'if' keeps from appending unnecessary move at end. 
-            traversal_path.append(escape_route(end))
+        visited.add(player.current_room)
+
+        if len(path) > 0:
+            move = random.choice(path) #Picking random move index
+            player.travel(move)
+            paths.add(move)
+            traversal_path.append(move)
+
+        else:
+            end = paths.remove()
+            player.travel(escape_route(end))
+            if len(visited) < len(world.rooms): #Putting this in an 'if' keeps from appending unnecessary move at end. 
+                traversal_path.append(escape_route(end))
+    return traversal_path
+
+#Estab;ish variables to keep searching
+keep_searching = True
+final_path = []
+lowest_moves = 1000
+
+while keep_searching:
+    temp_traversal_path = []
+    visited = set()
+    paths = Stack()
+    player = Player(world.starting_room)
+    temp_traversal_path = find_all_rooms(temp_traversal_path, visited, paths)
+    if len(temp_traversal_path) < lowest_moves:
+        lowest_moves = len(temp_traversal_path)
+        print("New lowest moves found: ", lowest_moves)
+        user_choice = input("Continue? ")
+        if user_choice == "n" or user_choice == "q":
+            keep_searching = False
+            final_path = temp_traversal_path
+    if lowest_moves < 960:
+        final_path = temp_traversal_path
+        keep_searching = False
+
+traversal_path = final_path
 
 
 # TRAVERSAL TEST - DO NOT MODIFY
@@ -121,3 +148,4 @@ else:
 #         break
 #     else:
 #         print("I did not understand that command.")
+
