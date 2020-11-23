@@ -97,8 +97,9 @@ def find_all_rooms(traversal_path, visited, paths):
 keep_searching = True
 final_path = []
 lowest_moves = 1000
-
+count = 0
 while keep_searching:
+    count += 1
     temp_traversal_path = []
     visited = set()
     paths = Stack()
@@ -107,12 +108,14 @@ while keep_searching:
     if len(temp_traversal_path) < lowest_moves:
         lowest_moves = len(temp_traversal_path)
         print("New lowest moves found: ", lowest_moves)
+        print("Number of attempts: ", count)
         user_choice = input("Continue? ")
         if user_choice == "n" or user_choice == "q":
             keep_searching = False
             final_path = temp_traversal_path
     if lowest_moves < 960:
         final_path = temp_traversal_path
+        print("Final Number of Attempts: ", count)
         keep_searching = False
 
 traversal_path = final_path
